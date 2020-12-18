@@ -9,7 +9,7 @@ public class PlayerBehaviour : MonoBehaviour
     public GameObject bullet;
     public int fireRate;
 
-    public bool isPaused = false;
+    public bool isPaused;
     public Vector3 forward;
 
     public BulletManager bulletManager;
@@ -23,28 +23,33 @@ public class PlayerBehaviour : MonoBehaviour
     public CubeBehaviour cube;
     public Camera playerCam;
 
-    void start()
-    {
+    // all game objects in the scene
+    public RigidBody3D[] rigidBodies;
 
+    void Start()
+    {
+        rigidBodies = FindObjectsOfType<RigidBody3D>();
+        isPaused = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        _Fire();
-        _Move();
-        forward.x = playerCam.transform.forward.x;
-        forward.z = playerCam.transform.forward.z;
+        if (!isPaused)
+        {
+            _Fire();
+            _Move();
+            forward.x = playerCam.transform.forward.x;
+            forward.z = playerCam.transform.forward.z;
+
+        }
         //Debug.Log("Forward Vector: " + forward);
         if (Input.GetKeyDown("p"))
         {
-            if (isPaused)
+            isPaused = !isPaused;
+            foreach(var bodies in rigidBodies)
             {
-                isPaused = false;
-            }
-            else
-            {
-                isPaused = true;
+                bodies.isPaused = isPaused;
             }
         }
     }

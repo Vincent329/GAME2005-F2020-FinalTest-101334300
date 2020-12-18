@@ -8,7 +8,6 @@ public class CollisionManager : MonoBehaviour
 {
     public CubeBehaviour[] cubes;
     public BulletBehaviour[] spheres;
-    public PlayerBehaviour player;
 
     private static Vector3[] faces;
 
@@ -195,10 +194,11 @@ public class CollisionManager : MonoBehaviour
                     bRigidBody.acceleration.y = 0;
 
                     Debug.Log("Player to Cube Collision");
-                    b.transform.position += Vector3.Normalize(aRigidBody.velocity) * contactB.penetration; // resolution
-                    bRigidBody.velocity = Vector3.Normalize(aRigidBody.velocity)  * Time.deltaTime; // match the velocity to the player
-                }
 
+                    b.transform.position += Vector3.Normalize(aRigidBody.velocity) * a.GetComponent<PlayerBehaviour>().speed / 5 * contactB.penetration; // resolution
+                    bRigidBody.velocity = Vector3.Normalize(aRigidBody.velocity) * a.GetComponent<PlayerBehaviour>().speed /10 * Time.deltaTime; // match the velocity to the player
+                    
+                }
 
                 // add the new contact
                 a.contacts.Add(contactB);
