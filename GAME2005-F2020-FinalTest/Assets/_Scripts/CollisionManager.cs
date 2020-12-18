@@ -8,8 +8,10 @@ public class CollisionManager : MonoBehaviour
 {
     public CubeBehaviour[] cubes;
     public BulletBehaviour[] spheres;
+    public PlayerBehaviour player;
 
     private static Vector3[] faces;
+
 
     // Start is called before the first frame update
     void Start()
@@ -54,6 +56,11 @@ public class CollisionManager : MonoBehaviour
             }
         }
 
+
+    }
+
+    public static void checkAABB(BulletBehaviour a, CubeBehaviour b)
+    {
 
     }
 
@@ -126,6 +133,9 @@ public class CollisionManager : MonoBehaviour
     {
         Contact contactB = new Contact(b);
 
+        RigidBody3D aRigidBody = a.GetComponent<RigidBody3D>();
+        RigidBody3D bRigidBody = b.GetComponent<RigidBody3D>();
+
         if ((a.min.x <= b.max.x && a.max.x >= b.min.x) &&
             (a.min.y <= b.max.y && a.max.y >= b.min.y) &&
             (a.min.z <= b.max.z && a.max.z >= b.min.z))
@@ -171,12 +181,28 @@ public class CollisionManager : MonoBehaviour
                     }
                 }
 
-                if (contactB.face == Vector3.down)
+              
+                if (contactB.face == Vector3.down) // if the cubes are on top of each other 
                 {
                     a.gameObject.GetComponent<RigidBody3D>().Stop();
                     a.isGrounded = true;
                 }
-                
+                if (a.tag == "Player" && bRigidBody.bodyType == BodyType.DYNAMIC)
+                {
+                    
+                    //if (bRigidBody.isFalling == false)
+                    //{
+                    bRigidBody.velocity.y = 0;
+                    bRigidBody.acceleration.y = 0;
+                   // }
+                    Debug.Log("Player to Cube Collision");
+                    b.transform.position += a.GetComponent<PlayerBehaviour>().forward / 2.0f;
+                    bRigidBody.velocity = a.GetComponent<PlayerBehaviour>().forward * 2 * Time.deltaTime;
+                   // bRigidBody.velocity = ((2 * aRigidBody.mass) / (aRigidBody.mass + bRigidBody.mass)) * aRigidBody.velocity * a.GetComponent<PlayerBehaviour>().speed;
+                    // bRigidBody.velocity = a.GetComponent<PlayerBehaviour>().forward;
+                    //bRigidBody.velocity.y = 0;
+                }
+
 
                 // add the new contact
                 a.contacts.Add(contactB);

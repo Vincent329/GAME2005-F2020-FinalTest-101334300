@@ -9,6 +9,8 @@ public class PlayerBehaviour : MonoBehaviour
     public GameObject bullet;
     public int fireRate;
 
+    public bool isPaused = false;
+    public Vector3 forward;
 
     public BulletManager bulletManager;
 
@@ -31,6 +33,20 @@ public class PlayerBehaviour : MonoBehaviour
     {
         _Fire();
         _Move();
+        forward.x = playerCam.transform.forward.x;
+        forward.z = playerCam.transform.forward.z;
+        //Debug.Log("Forward Vector: " + forward);
+        if (Input.GetKeyDown("p"))
+        {
+            if (isPaused)
+            {
+                isPaused = false;
+            }
+            else
+            {
+                isPaused = true;
+            }
+        }
     }
 
     private void _Move()
@@ -53,12 +69,45 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 // move forward
                 body.velocity = playerCam.transform.forward * speed * Time.deltaTime;
+                if (Input.GetAxisRaw("Horizontal") > 0.0f)
+                {
+                    // move right
+
+                    body.velocity += playerCam.transform.right * speed * Time.deltaTime;
+                    body.velocity.x *= 0.8f;
+                    body.velocity.z *= 0.8f;
+                }
+
+                else if (Input.GetAxisRaw("Horizontal") < 0.0f)
+                {
+                    // move left
+                    body.velocity += -playerCam.transform.right * speed * Time.deltaTime;
+                    body.velocity.x *= 0.8f;
+                    body.velocity.z *= 0.8f;
+                }
+                
             }
 
             if (Input.GetAxisRaw("Vertical") < 0.0f) 
             {
                 // move Back
                 body.velocity = -playerCam.transform.forward * speed * Time.deltaTime;
+                if (Input.GetAxisRaw("Horizontal") > 0.0f)
+                {
+                    // move right
+                    body.velocity += playerCam.transform.right * speed * Time.deltaTime;
+                    body.velocity.x *= 0.8f;
+                    body.velocity.z *= 0.8f;
+                }
+
+                else if (Input.GetAxisRaw("Horizontal") < 0.0f)
+                {
+                    // move left
+                    body.velocity += -playerCam.transform.right * speed * Time.deltaTime;
+                    body.velocity.x *= 0.8f;
+                    body.velocity.z *= 0.8f;
+                }
+               
             }
 
             body.velocity = Vector3.Lerp(body.velocity, Vector3.zero, 0.9f);
@@ -67,7 +116,9 @@ public class PlayerBehaviour : MonoBehaviour
 
             if (Input.GetAxisRaw("Jump") > 0.0f)
             {
-                body.velocity = transform.up * speed * 0.1f * Time.deltaTime;
+               // body.velocity.x /= 1.5f;
+               // body.velocity.z /= 1.5f;
+                body.velocity.y = 1.0f * speed * 0.1f * Time.deltaTime;
             }
 
             transform.position += body.velocity;
@@ -85,6 +136,7 @@ public class PlayerBehaviour : MonoBehaviour
 
                 var tempBullet = bulletManager.GetBullet(bulletSpawn.position, bulletSpawn.forward);
                 tempBullet.transform.SetParent(bulletManager.gameObject.transform);
+                //tempBullet.SetActive(true);
             }
         }
     }
