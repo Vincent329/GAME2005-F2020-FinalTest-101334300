@@ -7,6 +7,6 @@ public class SceneManager : MonoBehaviour
 {
     public void ChangeScene()
     {
-        //SceneManager.LoadScene
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Main", LoadSceneMode.Single);
     }
 }

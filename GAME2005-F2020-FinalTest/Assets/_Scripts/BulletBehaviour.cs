@@ -9,12 +9,16 @@ public class BulletBehaviour : MonoBehaviour
     public Vector3 direction;
     public float range;
     public float radius;
+    public Vector3 min;
+    public Vector3 max;
     public bool debug;
     public bool isColliding;
     public Vector3 collisionNormal;
     public float penetration;
 
     public BulletManager bulletManager;
+
+    private MeshFilter meshFilter;
 
     // Start is called before the first frame update
     void Start()
