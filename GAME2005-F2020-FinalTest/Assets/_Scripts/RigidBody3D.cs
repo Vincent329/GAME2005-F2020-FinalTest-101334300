@@ -57,7 +57,7 @@ public class RigidBody3D : MonoBehaviour
                     transform.position += velocity;
 
                 }
-            }
+            } 
 
         }
     }

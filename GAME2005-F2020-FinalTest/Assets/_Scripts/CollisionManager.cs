@@ -187,20 +187,16 @@ public class CollisionManager : MonoBehaviour
                     a.gameObject.GetComponent<RigidBody3D>().Stop();
                     a.isGrounded = true;
                 }
+
                 if (a.tag == "Player" && bRigidBody.bodyType == BodyType.DYNAMIC)
                 {
-                    
-                    //if (bRigidBody.isFalling == false)
-                    //{
+                    // keep the cube on the ground
                     bRigidBody.velocity.y = 0;
                     bRigidBody.acceleration.y = 0;
-                   // }
+
                     Debug.Log("Player to Cube Collision");
-                    b.transform.position += a.GetComponent<PlayerBehaviour>().forward / 2.0f;
-                    bRigidBody.velocity = a.GetComponent<PlayerBehaviour>().forward * 2 * Time.deltaTime;
-                   // bRigidBody.velocity = ((2 * aRigidBody.mass) / (aRigidBody.mass + bRigidBody.mass)) * aRigidBody.velocity * a.GetComponent<PlayerBehaviour>().speed;
-                    // bRigidBody.velocity = a.GetComponent<PlayerBehaviour>().forward;
-                    //bRigidBody.velocity.y = 0;
+                    b.transform.position += Vector3.Normalize(aRigidBody.velocity) * contactB.penetration; // resolution
+                    bRigidBody.velocity = Vector3.Normalize(aRigidBody.velocity)  * Time.deltaTime; // match the velocity to the player
                 }
 
 
