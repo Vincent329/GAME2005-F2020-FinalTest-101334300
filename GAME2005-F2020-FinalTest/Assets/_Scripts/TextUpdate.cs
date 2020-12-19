@@ -8,11 +8,13 @@ public class TextUpdate : MonoBehaviour
     public string beforeText;
 
     public TextMeshProUGUI thisText;
+    public float tempVal;
 
 
     void Start()
     {
         thisText = GetComponent<TextMeshProUGUI>();
+        tempVal = 0;
     }
 
     // Update is called once per frame
@@ -23,6 +25,7 @@ public class TextUpdate : MonoBehaviour
 
     public void ChangeText(float value)
     {
-        thisText.text = beforeText + value.ToString("F2");
+        tempVal = value;
+        thisText.text = beforeText + tempVal.ToString("F2");
     }
 }

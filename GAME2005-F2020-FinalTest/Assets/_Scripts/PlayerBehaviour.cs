@@ -17,6 +17,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     [Header("Movement")]
     public float speed;
+    public float jumpFactor;
     public bool isGrounded;
 
 
@@ -30,7 +31,6 @@ public class PlayerBehaviour : MonoBehaviour
     void Start()
     {
         rigidBodies = FindObjectsOfType<RigidBody3D>();
-        forceMag = 5;
         isPaused = true;
     }
 
@@ -140,7 +140,7 @@ public class PlayerBehaviour : MonoBehaviour
             {
                // body.velocity.x /= 1.5f;
                // body.velocity.z /= 1.5f;
-                body.velocity.y = 1.0f * speed * 0.1f * Time.deltaTime;
+                body.velocity.y = 1.0f * jumpFactor * 0.1f * Time.deltaTime;
             }
 
             transform.position += body.velocity;
@@ -177,5 +177,8 @@ public class PlayerBehaviour : MonoBehaviour
     {
         forceMag = force;
     }
-
+    public void ChangeJump(float jump)
+    {
+        jumpFactor = jump;
+    }
 }
