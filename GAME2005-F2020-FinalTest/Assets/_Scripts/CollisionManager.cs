@@ -97,9 +97,6 @@ public class CollisionManager : MonoBehaviour
             contactB.penetration = penetration;
             a.penetration = penetration;
             a.collisionNormal = face;
-            Debug.Log("Collision Normal " + a.collisionNormal);
-            Debug.Log("Penetration Depth " + a.penetration);
-            //Debug.Break();
             
             ReflectBullet(a);
         }
@@ -251,14 +248,22 @@ public class CollisionManager : MonoBehaviour
                 if (a.tag == "Player" && bRigidBody.bodyType == BodyType.DYNAMIC)
                 {
                     // keep the cube on the ground
-                    bRigidBody.velocity.y = 0;
-                    bRigidBody.acceleration.y = 0;
+                    //bRigidBody.velocity.y = 0;
+                    //bRigidBody.acceleration.y = 0;
+
+                    Vector3 normalizedVelocity = Vector3.Normalize(aRigidBody.velocity);
+
+                    bRigidBody.forceX = a.GetComponent<PlayerBehaviour>().forceMag * normalizedVelocity.x;
+                    bRigidBody.forceZ = a.GetComponent<PlayerBehaviour>().forceMag * normalizedVelocity.z;
+
+                    // acceleration = force/mass
+                    Vector3 impulse = new Vector3(bRigidBody.forceX / bRigidBody.mass, 0.0f, bRigidBody.forceZ / bRigidBody.mass);
 
                     Debug.Log("Player to Cube Collision");
 
                     b.transform.position += Vector3.Normalize(aRigidBody.velocity) * a.GetComponent<PlayerBehaviour>().speed / 5 * contactB.penetration; // resolution
-                    bRigidBody.velocity = Vector3.Normalize(aRigidBody.velocity) * a.GetComponent<PlayerBehaviour>().speed /10 * Time.deltaTime; // match the velocity to the player
-                    
+                    // bRigidBody.velocity = Vector3.Normalize(aRigidBody.velocity) * a.GetComponent<PlayerBehaviour>().speed / 10 * Time.deltaTime; // match the velocity to the player
+                    bRigidBody.velocity = impulse * Time.deltaTime;
                 }
 
                 // add the new contact
@@ -280,6 +285,15 @@ public class CollisionManager : MonoBehaviour
                     a.gameObject.GetComponent<RigidBody3D>().isFalling = true;
                     a.isGrounded = false;
                 }
+            }
+            if (a.isGrounded && a.tag != "Player")
+            {
+                aRigidBody.velocity.y = 0;
+                aRigidBody.acceleration.y = 0;
+            }
+            if (a.contacts.Count == 0 && aRigidBody.isFalling)
+            {
+                aRigidBody.acceleration.y = -0.001f;
             }
         }
     }

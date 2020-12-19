@@ -24,6 +24,8 @@ public class RigidBody3D : MonoBehaviour
     public Vector3 velocity;
     public Vector3 acceleration;
     private float gravity;
+    public float forceX;
+    public float forceZ;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +34,8 @@ public class RigidBody3D : MonoBehaviour
         gravity = -0.001f;
         velocity = Vector3.zero;
         acceleration = new Vector3(0.0f, gravity * gravityScale, 0.0f);
+        forceX = 0;
+        forceZ = 0;
         if (bodyType == BodyType.DYNAMIC)
         {
             isFalling = true;

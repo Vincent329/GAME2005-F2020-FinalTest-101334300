@@ -11,6 +11,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     public bool isPaused;
     public Vector3 forward;
+    public float forceMag;
 
     public BulletManager bulletManager;
 
@@ -29,6 +30,7 @@ public class PlayerBehaviour : MonoBehaviour
     void Start()
     {
         rigidBodies = FindObjectsOfType<RigidBody3D>();
+        forceMag = 5;
         isPaused = true;
     }
 
