@@ -238,11 +238,20 @@ public class CollisionManager : MonoBehaviour
                     }
                 }
 
-              
+
                 if (contactB.face == Vector3.down) // if the cubes are on top of each other 
                 {
-                    a.gameObject.GetComponent<RigidBody3D>().Stop();
-                    a.isGrounded = true;
+                    if (b.tag == "Floor" && a.tag != "Player") // keep moving if it hits the floor
+                    {
+                        aRigidBody.velocity.y = 0;
+                        aRigidBody.acceleration.y = 0;
+                        a.isGrounded = true;
+                    }
+                    else
+                    {
+                        a.gameObject.GetComponent<RigidBody3D>().Stop();
+                        a.isGrounded = true;
+                    }
                 }
 
                 if (a.tag == "Player" && bRigidBody.bodyType == BodyType.DYNAMIC)

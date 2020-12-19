@@ -173,4 +173,9 @@ public class PlayerBehaviour : MonoBehaviour
         isGrounded = cube.isGrounded;
     }
 
+    public void ChangeForce(float force)
+    {
+        forceMag = force;
+    }
+
 }
