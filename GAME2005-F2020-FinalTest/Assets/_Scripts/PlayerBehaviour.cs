@@ -37,11 +37,18 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (!isPaused)
         {
+            Time.timeScale = 1;
             _Fire();
             _Move();
             forward.x = playerCam.transform.forward.x;
             forward.z = playerCam.transform.forward.z;
-
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+         else {
+            Time.timeScale = 0;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
         //Debug.Log("Forward Vector: " + forward);
         if (Input.GetKeyDown("p"))
@@ -50,6 +57,14 @@ public class PlayerBehaviour : MonoBehaviour
             foreach(var bodies in rigidBodies)
             {
                 bodies.isPaused = isPaused;
+            }
+        }
+        //Take Q button for going back to Main Menu
+        if (Input.GetKeyDown("q"))
+        {
+            Debug.Log("Q Button Pressed");
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene("StartScene");
             }
         }
     }
