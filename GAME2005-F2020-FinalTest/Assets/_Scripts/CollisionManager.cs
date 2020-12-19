@@ -7,7 +7,7 @@ using UnityEngine;
 public class CollisionManager : MonoBehaviour
 {
     public CubeBehaviour[] cubes;
-    public BulletBehaviour[] spheres;
+    public BulletBehaviour[] bullets;
 
     private static Vector3[] faces;
 
@@ -28,7 +28,7 @@ public class CollisionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        spheres = FindObjectsOfType<BulletBehaviour>();
+        bullets = FindObjectsOfType<BulletBehaviour>();
 
         // check each AABB with every other AABB in the scene
         for (int i = 0; i < cubes.Length; i++)
@@ -43,13 +43,14 @@ public class CollisionManager : MonoBehaviour
         }
 
         // Check each sphere against each AABB in the scene
-        foreach (var sphere in spheres)
+        foreach (var bullet in bullets)
         {
             foreach (var cube in cubes)
             {
                 if (cube.name != "Player")
                 {
-                    CheckSphereAABB(sphere, cube);
+                    //CheckSphereAABB(bullet, cube);
+                    checkBulletAABB(bullet, cube);
                 }
                 
             }
@@ -58,9 +59,50 @@ public class CollisionManager : MonoBehaviour
 
     }
 
-    public static void checkAABB(BulletBehaviour a, CubeBehaviour b)
+    public static void checkBulletAABB(BulletBehaviour a, CubeBehaviour b)
     {
+        Contact contactB = new Contact(b);
 
+        if ((a.min.x <= b.max.x && a.max.x >= b.min.x) &&
+          (a.min.y <= b.max.y && a.max.y >= b.min.y) &&
+          (a.min.z <= b.max.z && a.max.z >= b.min.z))
+        {
+            Debug.Log("Hit");
+            // determine the distances between the contact extents
+            float[] distances = {
+                (b.max.x - a.min.x),
+                (a.max.x - b.min.x),
+                (b.max.y - a.min.y),
+                (a.max.y - b.min.y),
+                (b.max.z - a.min.z),
+                (a.max.z - b.min.z)
+            };
+
+            float penetration = float.MaxValue;
+            Vector3 face = Vector3.zero;
+
+            // check each face to see if it is the one that connected
+            for (int i = 0; i < 6; i++)
+            {
+                if (distances[i] < penetration)
+                {
+                    // determine the penetration distance
+                    penetration = distances[i];
+                    face = faces[i];
+                }
+            }
+
+            // set the contact properties
+            contactB.face = face;
+            contactB.penetration = penetration;
+            a.penetration = penetration;
+            a.collisionNormal = face;
+            Debug.Log("Collision Normal " + a.collisionNormal);
+            Debug.Log("Penetration Depth " + a.penetration);
+            //Debug.Break();
+            
+            ReflectBullet(a);
+        }
     }
 
     public static void CheckSphereAABB(BulletBehaviour s, CubeBehaviour b)
@@ -102,9 +144,11 @@ public class CollisionManager : MonoBehaviour
 
             s.penetration = penetration;
             s.collisionNormal = face;
+            Debug.Log("Collision Normal " + s.collisionNormal);
+
             //s.isColliding = true;
 
-            
+
             Reflect(s);
         }
 
@@ -113,6 +157,22 @@ public class CollisionManager : MonoBehaviour
     // This helper function reflects the bullet when it hits an AABB face
     private static void Reflect(BulletBehaviour s)
     {
+        if ((s.collisionNormal == Vector3.forward) || (s.collisionNormal == Vector3.back))
+        {
+            s.direction = new Vector3(s.direction.x, s.direction.y, -s.direction.z);
+        }
+        else if ((s.collisionNormal == Vector3.right) || (s.collisionNormal == Vector3.left))
+        {
+            s.direction = new Vector3(-s.direction.x, s.direction.y, s.direction.z);
+        }
+        else if ((s.collisionNormal == Vector3.up) || (s.collisionNormal == Vector3.down))
+        {
+            s.direction = new Vector3(s.direction.x, -s.direction.y, s.direction.z);
+        }
+    }
+    private static void ReflectBullet(BulletBehaviour s)
+    {
+        s.transform.position -= (s.direction * 3.5f) * s.speed * s.penetration;
         if ((s.collisionNormal == Vector3.forward) || (s.collisionNormal == Vector3.back))
         {
             s.direction = new Vector3(s.direction.x, s.direction.y, -s.direction.z);
