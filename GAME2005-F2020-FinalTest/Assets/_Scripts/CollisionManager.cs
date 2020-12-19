@@ -172,7 +172,8 @@ public class CollisionManager : MonoBehaviour
     }
     private static void ReflectBullet(BulletBehaviour s)
     {
-        s.transform.position -= (s.direction * 3.5f) * s.speed * s.penetration;
+        s.transform.position -= s.collisionNormal * s.penetration * s.speed; // resolution
+        
         if ((s.collisionNormal == Vector3.forward) || (s.collisionNormal == Vector3.back))
         {
             s.direction = new Vector3(s.direction.x, s.direction.y, -s.direction.z);
